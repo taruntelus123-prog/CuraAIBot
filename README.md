@@ -1,24 +1,19 @@
-# CuraAIBot
+CuraAIBot
+How to Run
 
-# How to run ?
-### STEPS:
+Follow these steps to set up and run CuraAIBot:
 
-Clone the Repository
-
-'''bash
+Step 1: Clone the Repository
 git clone https://github.com/taruntelus123-prog/CuraAIBot.git
+cd CuraAIBot
 
-
-### STEP 01: Create a conda environment after opening the reposistory
-
-'''bash
-conda create -n CuraAIBot  python = 3.13 -y
-
-
-'''bash
+Step 2: Create and Activate Conda Environment
+conda create -n CuraAIBot python=3.13 -y
 conda init
 conda activate CuraAIBot
 
-### STEP 02- install the requirements
-'''bash
+Step 3: Install Requirements
 pip install -r requirements.txt
+
+Step 4: Run the Application
+python app.py
