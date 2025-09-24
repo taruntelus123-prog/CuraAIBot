@@ -3,6 +3,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceBgeEmbeddings, HuggingFaceEmbeddings
 from typing import List
 from langchain.schema import Document
+from openai import embeddings
 
 
 #Extract text from PDFs in a directory
