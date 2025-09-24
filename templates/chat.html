@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CareBot — Healthcare Chat UI</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">CB</div>
+        <div class="brand-text">
+          <h1>CuraBot</h1>
+          <p class="muted">Your health companion</p>
+        </div>
+      </div>
+
+      <div class="profile">
+        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop" alt="doctor"/>
+        <div class="profile-info">
+          <strong>Dr. Asha Rao</strong>
+          <span class="muted">General Physician</span>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <button class="btn ghost">New Consultation</button>
+        <button class="btn">Schedule</button>
+      </div>
+
+      <div class="info-card">
+        <h3>Health Tips</h3>
+        <ul>
+          <li>Stay hydrated — target 8 glasses/day</li>
+          <li>Sleep 7–8 hours nightly</li>
+          <li>Move 30 mins daily</li>
+        </ul>
+      </div>
+
+      <footer class="sidebar-footer muted">
+        <small>HIPAA-aware demo UI • v1.0</small>
+      </footer>
+    </aside>
+
+    <main class="chat-wrap">
+      <header class="chat-header">
+        <div class="chat-title">
+          <h2>Chat with CuraBot</h2>
+          <p class="muted">Clinical triage and symptom checks — demo only</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon" title="Attach">📎</button>
+          <button class="icon" title="Settings">⚙️</button>
+        </div>
+      </header>
+
+      <section class="chat-area" id="chatArea" aria-live="polite">
+        <div class="bubble bot">
+          <div class="avatar">CB</div>
+          <div class="message">
+            <p>Hello! I'm CuraBot — tell me your symptoms or ask a health question.</p>
+            <time>09:00</time>
+          </div>
+        </div>
+        <!-- more messages show up here -->
+      </section>
+
+      <form class="composer" id="composer" onsubmit="return false;">
+        <div class="input-wrap">
+          <input id="messageInput" type="text" placeholder="Describe your symptoms or type 'help'..." aria-label="Message input" />
+          <button id="quickSymptom" type="button" class="chip">Fever</button>
+        </div>
+        <div class="controls">
+          <button id="sendBtn" class="btn primary" type="submit">Send</button>
+        </div>
+      </form>
+    </main>
+
+    <aside class="rightpanel">
+      <div class="card">
+        <h3>Patient Summary</h3>
+        <div class="patient-row">
+          <div>
+            <strong>Name</strong>
+            <div class="muted">Guest</div>
+          </div>
+          <div>
+            <strong>Age</strong>
+            <div class="muted">—</div>
+          </div>
+        </div>
+        <hr>
+        <h4>Suggested Actions</h4>
+        <ul class="actions">
+          <li>Self-care advice</li>
+          <li>Book teleconsultation</li>
+          <li>Emergency: call local services</li>
+        </ul>
+      </div>
+
+      <div class="card small">
+        <h4>Quick Buttons</h4>
+        <div class="quick-grid">
+          <button class="small-btn">Vitals</button>
+          <button class="small-btn">Med History</button>
+          <button class="small-btn">Prescriptions</button>
+          <button class="small-btn">Lab</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const chatArea = document.getElementById('chatArea');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const quickSymptom = document.getElementById('quickSymptom');
+
+    function appendMessage({from='user', text, time}) {
+      const wrap = document.createElement('div');
+      wrap.className = 'bubble ' + (from === 'bot' ? 'bot' : 'me');
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = from === 'bot' ? 'CB' : 'You';
+      const msg = document.createElement('div');
+      msg.className = 'message';
+      const p = document.createElement('p');
+      p.textContent = text;
+      const t = document.createElement('time');
+      t.textContent = time || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      msg.appendChild(p);
+      msg.appendChild(t);
+      wrap.appendChild(avatar);
+      wrap.appendChild(msg);
+      chatArea.appendChild(wrap);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function botReply(prompt) {
+      const lower = prompt.toLowerCase();
+      if (lower.includes('fever')) return 'I see you mentioned fever. How high is the temperature and for how long?';
+      if (lower.includes('headache')) return 'For headaches, try rest, hydration, and avoid screens for a while. Any nausea?';
+      if (lower.includes('help')) return 'You can tell symptoms like: fever, cough, headache, or ask about medications and first aid.';
+      return "Thanks — I've noted that. For specific advice, please consult a professional. This is a demo UI.";
+    }
+
+    sendBtn.addEventListener('click', () => {
+      const v = messageInput.value.trim();
+      if (!v) return;
+      appendMessage({from: 'user', text: v});
+      messageInput.value = '';
+      setTimeout(() => {
+        const reply = botReply(v);
+        appendMessage({from: 'bot', text: reply});
+      }, 700);
+    });
+
+    quickSymptom.addEventListener('click', () => {
+      messageInput.value = 'I have a fever';
+      messageInput.focus();
+    });
+
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
